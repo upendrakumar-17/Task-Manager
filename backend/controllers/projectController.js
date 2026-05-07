@@ -56,25 +56,25 @@ exports.getProjectById = async (req, res) => {
   }
 };
 
-// Update project
-// exports.updateProject = async (req, res) => {
-//   try {
-//     const project = await Project.findOneAndUpdate(
-//       {
-//         _id: req.params.id,
-//         admin: req.user.id,
-//       },
-//       req.body,
-//       { new: true }
-//     );
+    // Update project
+    // exports.updateProject = async (req, res) => {
+    //   try {
+    //     const project = await Project.findOneAndUpdate(
+    //       {
+    //         _id: req.params.id,
+    //         admin: req.user.id,
+    //       },
+    //       req.body,
+    //       { new: true }
+    //     );
 
-//     res.json(project);
-//   } catch (error) {
-//     res.status(500).json({
-//       message: error.message,
-//     });
-//   }
-// };
+    //     res.json(project);
+    //   } catch (error) {
+    //     res.status(500).json({
+    //       message: error.message,
+    //     });
+    //   }
+    // };
 
 // Delete project
 exports.deleteProject = async (req, res) => {
@@ -166,3 +166,4 @@ exports.removeMember = async (req, res) => {
     });
   }
 };
+
