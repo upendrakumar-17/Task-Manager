@@ -141,6 +141,70 @@
   text-decoration: underline;
 }
 
+/* OTP Styles */
+.input-with-action {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.input-with-action input {
+  flex: 1;
+}
+
+.otp-btn {
+  background: var(--primary);
+  color: white;
+  border: none;
+  padding: 0 1rem;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+
+.otp-btn:disabled {
+  background: var(--border-color);
+  cursor: not-allowed;
+  color: var(--text-muted);
+}
+
+.otp-btn.verify {
+  background: #000;
+}
+
+.verified-badge {
+  display: inline-block;
+  margin-top: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #059669;
+  background: #ecfdf5;
+  padding: 0.25rem 0.75rem;
+  border-radius: 100px;
+}
+
+.auth-submit.disabled {
+  background: var(--border-color);
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.animate-slide-down {
+  animation: slideDown 0.3s ease-out forwards;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 @media (max-width: 480px) {
   .auth-card {
     padding: 2rem 1.5rem;
