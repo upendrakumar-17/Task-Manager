@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Outlet } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Sidebar from '../components/Sidebar';
 
@@ -11,12 +12,7 @@ const Dashboard = () => {
       <div className="app-container">
         <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
         <main className="main-content">
-          <header className="page-header">
-            <h1>Dashboard</h1>
-          </header>
-          <div className="dashboard-grid">
-            <p>Welcome back! Here's an overview of your tasks.</p>
-          </div>
+          <Outlet />
         </main>
       </div>
     </div>

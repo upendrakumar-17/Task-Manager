@@ -23,18 +23,19 @@ const Sidebar = ({ isOpen, onClose }) => {
       <nav className="sidebar-nav">
         <NavLink 
           to="/dashboard" 
+          end
           className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}
         >
           Dashboard
         </NavLink>
         <NavLink 
-          to="/tasks" 
+          to="/dashboard/tasks" 
           className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}
         >
           My Tasks
         </NavLink>
         <NavLink 
-          to="/projects" 
+          to="/dashboard/projects" 
           className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}
         >
           Projects
@@ -44,7 +45,7 @@ const Sidebar = ({ isOpen, onClose }) => {
         <span className="sidebar-category">User</span>
         
         <NavLink 
-          to="/settings" 
+          to="/dashboard/settings" 
           className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}
         >
           Settings
