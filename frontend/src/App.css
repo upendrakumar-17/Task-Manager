@@ -109,6 +109,10 @@ a, button, input, textarea, select {
 
 .page-header {
   margin-bottom: 2.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
 }
 
 .page-header h1 {

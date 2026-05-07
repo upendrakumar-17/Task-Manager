@@ -37,7 +37,6 @@ const DashboardHome = () => {
     <div className="dashboard-home">
       <header className="page-header">
         <h1>Dashboard Overview</h1>
-        <p>Manage your team projects and track progress.</p>
       </header>
 
       <div className="stats-grid">
@@ -48,12 +47,6 @@ const DashboardHome = () => {
         <div className="stat-card">
           <h3>Assigned Tasks</h3>
           <div className="stat-value">{tasks.length}</div>
-        </div>
-        <div className="stat-card">
-          <h3>Total Members</h3>
-          <div className="stat-value">
-            {projects.reduce((acc, curr) => acc + (curr.members?.length || 0), 0)}
-          </div>
         </div>
       </div>
 

@@ -87,6 +87,16 @@ const Projects = () => {
     }
   };
 
+  const handleDeleteProject = async (projectId) => {
+    if (!window.confirm("Are you sure you want to delete this project? All associated tasks will be lost.")) return;
+    try {
+      await apiClient.delete(`/api/projects/${projectId}`);
+      fetchProjects();
+    } catch (err) {
+      alert(err.response?.data?.message || "Failed to delete project");
+    }
+  };
+
   if (loading) {
     return <div className="loading-container">Loading projects...</div>;
   }
@@ -107,34 +117,90 @@ const Projects = () => {
         </button>
       </header>
 
-      <div className="project-list">
-        {projects.map(project => {
-          const isAdmin = project.admin === currentUser?._id;
-          return (
-            <div key={project._id} className="project-card">
-              <div className="project-card-header">
-                <h3>{project.name}</h3>
-                {isAdmin && (
-                  <button 
-                    className="manage-btn" 
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setSelectedProject(project);
-                      setShowManageModal(true);
-                    }}
-                  >
-                    Manage
-                  </button>
-                )}
+      <div className="projects-sections">
+        {/* Admin Projects Section */}
+        <section className="projects-group">
+          <h2 className="section-title">Projects You Manage</h2>
+          <div className="project-list">
+            {projects.filter(p => p.admin === currentUser?._id).map(project => (
+              <div key={project._id} className="project-card admin-card">
+                <div className="project-card-header">
+                  <h3>{project.name}</h3>
+                  <span className="admin-badge-top">Admin</span>
+                </div>
+                <p className="project-card-desc">{project.description || "No description provided."}</p>
+                <div className="project-meta">
+                  <div className="member-count">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                      <circle cx="9" cy="7" r="4"></circle>
+                    </svg>
+                    <span>{project.members?.length || 0} Members</span>
+                  </div>
+                  <div className="card-actions">
+                    <button 
+                      className="manage-btn" 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedProject(project);
+                        setShowManageModal(true);
+                      }}
+                    >
+                      Add Members
+                    </button>
+                    <button 
+                      className="delete-card-btn" 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeleteProject(project._id);
+                      }}
+                      title="Delete Project"
+                    >
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <polyline points="3 6 5 6 21 6"></polyline>
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
               </div>
-              <p>{project.description || "No description provided."}</p>
-              <div className="project-meta">
-                <span>{project.members?.length || 0} Members</span>
-                {isAdmin && <span className="admin-badge">Admin</span>}
+            ))}
+            {projects.filter(p => p.admin === currentUser?._id).length === 0 && (
+              <div className="empty-state">
+                <p>You aren't managing any projects yet. Create one to get started!</p>
               </div>
-            </div>
-          );
-        })}
+            )}
+          </div>
+        </section>
+
+        {/* Member Projects Section */}
+        <section className="projects-group">
+          <h2 className="section-title">Projects You're In</h2>
+          <div className="project-list">
+            {projects.filter(p => p.admin !== currentUser?._id).map(project => (
+              <div key={project._id} className="project-card">
+                <div className="project-card-header">
+                  <h3>{project.name}</h3>
+                </div>
+                <p className="project-card-desc">{project.description || "No description provided."}</p>
+                <div className="project-meta">
+                  <div className="member-count">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                      <circle cx="9" cy="7" r="4"></circle>
+                    </svg>
+                    <span>{project.members?.length || 0} Members</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+            {projects.filter(p => p.admin !== currentUser?._id).length === 0 && (
+              <div className="empty-state">
+                <p>You haven't been added to any other projects yet.</p>
+              </div>
+            )}
+          </div>
+        </section>
       </div>
 
       {/* Create Project Modal */}
