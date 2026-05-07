@@ -1,0 +1,117 @@
+.main-navbar {
+  height: 72px;
+  background-color: var(--bg-main);
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.navbar-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.navbar-left, .navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.menu-toggle {
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  cursor: pointer;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  transition: background-color var(--transition-fast);
+}
+
+.menu-toggle:hover {
+  background-color: var(--bg-card-hover);
+}
+
+.navbar-logo {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  text-decoration: none;
+  letter-spacing: -0.02em;
+}
+
+.profile-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  transition: all var(--transition-fast);
+  background-color: var(--bg-card);
+}
+
+.profile-avatar:hover {
+  border-color: var(--text-primary);
+  color: var(--text-primary);
+  background-color: var(--bg-card-hover);
+}
+
+.navbar-links, .nav-auth-links {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+.nav-link {
+  text-decoration: none;
+  color: var(--text-primary);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  transition: color var(--transition-fast);
+}
+
+.nav-link:hover {
+  color: var(--text-secondary);
+}
+
+.nav-btn {
+  padding: 0.625rem 1.25rem;
+  background-color: var(--primary);
+  color: var(--text-inverse);
+  text-decoration: none;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  border-radius: var(--radius-sm);
+  transition: background-color var(--transition-fast);
+}
+
+.nav-btn:hover {
+  background-color: var(--primary-hover);
+}
+
+@media (max-width: 768px) {
+  .navbar-container {
+    padding: 0 1.5rem;
+  }
+  
+  .navbar-links {
+    gap: 1.25rem;
+  }
+
+  .nav-link {
+    display: none; /* Hide 'Sign In' on small screens, keep 'Get Started' */
+  }
+}
