@@ -12,12 +12,7 @@ env.config();
 const app = express();
 const PORT = process.env.PORT;
 
-app.use(
-  cors({
-    origin: `${process.env.FRONTEND_BASE_URL}`,
-    credentials: true,
-  })
-);
+app.use(cors());
 
 app.use(express.json());
 
