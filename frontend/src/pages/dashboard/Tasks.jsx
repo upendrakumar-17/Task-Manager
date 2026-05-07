@@ -32,7 +32,7 @@ const Tasks = () => {
   const fetchInitialData = async () => {
     try {
       const [tasksRes, projectsRes] = await Promise.all([
-        apiClient.get('/api/tasks/my-tasks'),
+        apiClient.get('/api/tasks/all-tasks'),
         apiClient.get('/api/projects')
       ]);
       setTasks(tasksRes.data);
@@ -47,7 +47,6 @@ const Tasks = () => {
   const handleCreateTask = async (e) => {
     e.preventDefault();
     try {
-      // If assignedTo is empty, default to self
       const taskData = {
         ...newTask,
         assignedTo: newTask.assignedTo || currentUser?._id
@@ -89,6 +88,10 @@ const Tasks = () => {
   // Find projects where user is admin for the creation dropdown
   const adminProjects = projects.filter(p => p.admin === currentUser?._id);
 
+  // Group tasks
+  const managedTasks = filteredTasks.filter(t => t.project?.admin === currentUser?._id);
+  const assignedTasks = filteredTasks.filter(t => t.project?.admin !== currentUser?._id && t.assignedTo?._id === currentUser?._id);
+
   return (
     <div className="tasks-page">
       <header className="page-header">
@@ -127,58 +130,118 @@ const Tasks = () => {
         </div>
       </div>
 
-      <div className="tasks-grid">
-        {filteredTasks.map(task => (
-          <div key={task._id} className="task-card">
-            <div className="task-card-header">
-              <h3>{task.title}</h3>
-              <span className={`priority-badge priority-${task.priority.toLowerCase()}`}>
-                {task.priority}
-              </span>
-            </div>
-            <p className="task-desc">{task.description}</p>
-            <div className="task-meta">
-              <span className="due-date">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                  <line x1="16" y1="2" x2="16" y2="6"></line>
-                  <line x1="8" y1="2" x2="8" y2="6"></line>
-                  <line x1="3" y1="10" x2="21" y2="10"></line>
-                </svg>
-                {task.dueDate ? new Date(task.dueDate).toLocaleDateString() : 'No deadline'}
-              </span>
-            </div>
-            <div className="task-card-footer">
-              <div className="task-project-tag">{task.project?.name}</div>
-              <div className="task-actions">
-                <select 
-                  className="status-select"
-                  value={task.status}
-                  onChange={(e) => updateTaskStatus(task._id, e.target.value)}
-                >
-                  <option value="Todo">Todo</option>
-                  <option value="In Progress">In Progress</option>
-                  <option value="Completed">Completed</option>
-                </select>
-                {/* Only show delete if user is admin of the task's project */}
-                {projects.find(p => p._id === task.project?._id)?.admin === currentUser?._id && (
-                  <button className="delete-task-btn" onClick={() => deleteTask(task._id)} title="Delete Task">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <polyline points="3 6 5 6 21 6"></polyline>
-                      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+      <div className="tasks-sections">
+        {/* Managed Tasks */}
+        <section className="tasks-group">
+          <h2 className="section-title">Tasks in Managed Projects</h2>
+          <div className="tasks-grid">
+            {managedTasks.map(task => (
+              <div key={task._id} className="task-card">
+                <div className="task-card-header">
+                  <h3>{task.title}</h3>
+                  <span className={`priority-tag priority-${task.priority.toLowerCase()}`}>
+                    {task.priority}
+                  </span>
+                </div>
+                <p className="task-desc">{task.description}</p>
+                <div className="task-project-info">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+                  </svg>
+                  <span>{task.project?.name}</span>
+                </div>
+                
+                <div className="task-card-footer">
+                  <div className="due-date">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                      <line x1="16" y1="2" x2="16" y2="6"></line>
+                      <line x1="8" y1="2" x2="8" y2="6"></line>
+                      <line x1="3" y1="10" x2="21" y2="10"></line>
                     </svg>
-                  </button>
-                )}
+                    <span>{task.dueDate ? new Date(task.dueDate).toLocaleDateString() : 'No deadline'}</span>
+                  </div>
+                  
+                  <div className="task-actions">
+                    <select 
+                      className="status-select"
+                      value={task.status}
+                      onChange={(e) => updateTaskStatus(task._id, e.target.value)}
+                    >
+                      <option value="Todo">Todo</option>
+                      <option value="In Progress">In Progress</option>
+                      <option value="Completed">Completed</option>
+                    </select>
+                    
+                    <button className="delete-task-btn" onClick={() => deleteTask(task._id)} title="Delete Task">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <polyline points="3 6 5 6 21 6"></polyline>
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
               </div>
-            </div>
+            ))}
+            {managedTasks.length === 0 && <p className="empty-state">No tasks to manage.</p>}
           </div>
-        ))}
+        </section>
+
+        {/* Assigned Tasks */}
+        <section className="tasks-group">
+          <h2 className="section-title">Tasks Assigned to You</h2>
+          <div className="tasks-grid">
+            {assignedTasks.map(task => (
+              <div key={task._id} className="task-card">
+                <div className="task-card-header">
+                  <h3>{task.title}</h3>
+                  <span className={`priority-tag priority-${task.priority.toLowerCase()}`}>
+                    {task.priority}
+                  </span>
+                </div>
+                <p className="task-desc">{task.description}</p>
+                <div className="task-project-info">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+                  </svg>
+                  <span>{task.project?.name}</span>
+                </div>
+                
+                <div className="task-card-footer">
+                  <div className="due-date">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                      <line x1="16" y1="2" x2="16" y2="6"></line>
+                      <line x1="8" y1="2" x2="8" y2="6"></line>
+                      <line x1="3" y1="10" x2="21" y2="10"></line>
+                    </svg>
+                    <span>{task.dueDate ? new Date(task.dueDate).toLocaleDateString() : 'No deadline'}</span>
+                  </div>
+                  
+                  <div className="task-actions">
+                    <select 
+                      className="status-select"
+                      value={task.status}
+                      onChange={(e) => updateTaskStatus(task._id, e.target.value)}
+                    >
+                      <option value="Todo">Todo</option>
+                      <option value="In Progress">In Progress</option>
+                      <option value="Completed">Completed</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            ))}
+            {assignedTasks.length === 0 && <p className="empty-state">No assigned tasks.</p>}
+          </div>
+        </section>
+      </div>
         {filteredTasks.length === 0 && (
           <div className="empty-state" style={{ gridColumn: '1/-1' }}>
             <p>No tasks found for this filter.</p>
           </div>
         )}
-      </div>
+      
 
       {/* Create Task Modal */}
       {showModal && (

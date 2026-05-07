@@ -4,6 +4,7 @@ const {
   createTask,
   getProjectTasks,
   getUserTasks,
+  getDashboardTasks,
   updateTask,
   deleteTask,
 } = require("../controllers/taskController");
@@ -13,6 +14,7 @@ router.use(authMiddleware);
 
 router.post("/", createTask);
 router.get("/my-tasks", getUserTasks);
+router.get("/all-tasks", getDashboardTasks);
 router.get("/project/:projectId", getProjectTasks);
 router.put("/:id", updateTask);
 router.delete("/:id", deleteTask);

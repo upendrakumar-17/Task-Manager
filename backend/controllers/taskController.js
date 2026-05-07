@@ -140,7 +140,26 @@ exports.deleteTask = async (req, res) => {
 exports.getUserTasks = async (req, res) => {
   try {
     const tasks = await Task.find({ assignedTo: req.user.id })
-      .populate("project", "name")
+      .populate("project", "name admin")
+      .sort({ createdAt: -1 });
+
+    res.json(tasks);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Get all tasks for projects the user is a member of
+exports.getDashboardTasks = async (req, res) => {
+  try {
+    // 1. Find all projects user belongs to
+    const projects = await Project.find({ members: req.user.id });
+    const projectIds = projects.map(p => p._id);
+
+    // 2. Find all tasks for those projects
+    const tasks = await Task.find({ project: { $in: projectIds } })
+      .populate("project", "name admin")
+      .populate("assignedTo", "name email")
       .sort({ createdAt: -1 });
 
     res.json(tasks);
