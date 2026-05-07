@@ -12,11 +12,18 @@ const projectSchema = new mongoose.Schema(
       default: "",
     },
 
-    owner: {
+    admin: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
     },
+
+    members: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
   },
   {
     timestamps: true,
