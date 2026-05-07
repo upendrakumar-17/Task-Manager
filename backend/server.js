@@ -13,10 +13,7 @@ app.use(express.json());
 connectDB();
 
 const userRoutes = require("./routes/userRoutes");
-app.use("/api/users", userRoutes);
-
-import emailVerificationRoutes from "./routes/email.js";
-app.use("/api/email-verification", emailVerificationRoutes);
+app.use("/api/user", userRoutes);
 
 
 app.get('/', (req, res) => {

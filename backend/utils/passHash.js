@@ -1,6 +1,6 @@
 const bcrypt = require("bcryptjs");
 
-const USE_HASH = process.env.USE_HASH;
+const USE_HASH = process.env.USE_HASH === "true";
 
 const hashPassword = async (password) => {
   if (!USE_HASH) return password; 
