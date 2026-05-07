@@ -13,7 +13,10 @@ app.use(express.json());
 connectDB();
 
 const userRoutes = require("./routes/userRoutes");
+const projectRoutes = require("./routes/projectRoutes");
+
 app.use("/api/user", userRoutes);
+app.use("/api/projects", projectRoutes);
 
 
 app.get('/', (req, res) => {
