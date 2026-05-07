@@ -55,3 +55,29 @@ exports.loginUser = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+// SEARCH USERS
+exports.searchUsers = async (req, res) => {
+  try {
+    const { query } = req.query;
+    if (!query) return res.json([]);
+
+    const users = await User.find({
+      $and: [
+        {
+          $or: [
+            { name: { $regex: query, $options: "i" } },
+            { email: { $regex: query, $options: "i" } },
+          ],
+        },
+        { _id: { $ne: req.user.id } }, // Exclude current user
+      ],
+    })
+      .select("name email")
+      .limit(10);
+
+    res.json(users);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};

@@ -24,7 +24,7 @@ exports.getProjects = async (req, res) => {
   try {
     const projects = await Project.find({
       members: req.user.id,
-    });
+    }).populate("members", "name email");
 
     res.json(projects);
   } catch (error) {
@@ -39,8 +39,8 @@ exports.getProjectById = async (req, res) => {
   try {
     const project = await Project.findOne({
       _id: req.params.id,
-      admin: req.user.id,
-    });
+      members: req.user.id, // Allow any member to view
+    }).populate("members", "name email");
 
     if (!project) {
       return res.status(404).json({

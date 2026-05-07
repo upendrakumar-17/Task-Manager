@@ -38,8 +38,9 @@ const Login = () => {
 
       console.log(response.data);
       
-      // Store user info if needed
-      // localStorage.setItem('user', JSON.stringify(response.data));
+      // Store user info and token in localStorage
+      localStorage.setItem('user', JSON.stringify(response.data));
+      localStorage.setItem('token', response.data.token);
 
       alert("Login successful");
       navigate('/dashboard');

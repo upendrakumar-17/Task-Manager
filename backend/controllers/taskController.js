@@ -135,3 +135,16 @@ exports.deleteTask = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+// Get all tasks assigned to the current user
+exports.getUserTasks = async (req, res) => {
+  try {
+    const tasks = await Task.find({ assignedTo: req.user.id })
+      .populate("project", "name")
+      .sort({ createdAt: -1 });
+
+    res.json(tasks);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};

@@ -1,8 +1,15 @@
-import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import './Sidebar.css';
 
 const Sidebar = ({ isOpen, onClose }) => {
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem('user');
+    localStorage.removeItem('token');
+    navigate('/login');
+  };
+
   return (
     <>
       <div 
@@ -53,7 +60,7 @@ const Sidebar = ({ isOpen, onClose }) => {
       </nav>
       
       <div className="sidebar-footer">
-        <button className="logout-btn">
+        <button className="logout-btn" onClick={handleLogout}>
           Sign Out
         </button>
       </div>
