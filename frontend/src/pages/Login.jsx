@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import "../styles/Register.css";
+import apiClient from '../services/apiClient';
 
 const Login = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: '',
     password: ''
@@ -12,10 +14,42 @@ const Login = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const validateForm = () => {
+    if (!formData.email || !formData.password) {
+      return "Please fill all fields";
+    }
+    return null;
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Login Data:', formData);
-    // Add authentication logic here
+
+    const validationError = validateForm();
+    if (validationError) {
+      alert(validationError);
+      return;
+    }
+
+    try {
+      const response = await apiClient.post("/api/users/login", {
+        email: formData.email,
+        password: formData.password,
+      });
+
+      console.log(response.data);
+      
+      // Store user info if needed
+      // localStorage.setItem('user', JSON.stringify(response.data));
+
+      alert("Login successful");
+      navigate('/dashboard');
+
+    } catch (error) {
+      console.error(error);
+      alert(
+        error.response?.data?.message || "Invalid credentials"
+      );
+    }
   };
 
   return (
@@ -76,4 +110,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Login;

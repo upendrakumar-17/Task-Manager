@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import "../styles/Register.css";
+import apiClient from '../services/apiClient';
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -13,10 +14,54 @@ const Register = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  // validation function
+  const validateForm = () => {
+    if (!formData.email || !formData.password || !formData.confirmPassword) {
+      return "Please fill all fields";
+    }
+
+    if (formData.password !== formData.confirmPassword) {
+      return "Passwords do not match";
+    }
+
+    return null;
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Registration Data:', formData);
-    // Add registration logic here
+
+    // validate form
+    const validationError = validateForm();
+
+    if (validationError) {
+      alert(validationError);
+      return;
+    }
+
+    try {
+      const response = await apiClient.post("/api/users/register", {
+        email: formData.email,
+        password: formData.password,
+      });
+
+      console.log(response.data);
+
+      alert("Registration successful");
+
+      // reset form
+      setFormData({
+        email: "",
+        password: "",
+        confirmPassword: "",
+      });
+
+    } catch (error) {
+      console.error(error);
+
+      alert(
+        error.response?.data?.message || "Something went wrong"
+      );
+    }
   };
 
   return (
@@ -31,40 +76,40 @@ const Register = () => {
         <form className="auth-form" onSubmit={handleSubmit}>
           <div className="form-group">
             <label htmlFor="email">Email Address</label>
-            <input 
-              type="email" 
-              id="email" 
-              name="email" 
-              placeholder="name@company.com" 
+            <input
+              type="email"
+              id="email"
+              name="email"
+              placeholder="name@company.com"
               value={formData.email}
               onChange={handleChange}
-              required 
+              required
             />
           </div>
 
           <div className="form-group">
             <label htmlFor="password">Password</label>
-            <input 
-              type="password" 
-              id="password" 
-              name="password" 
-              placeholder="••••••••" 
+            <input
+              type="password"
+              id="password"
+              name="password"
+              placeholder="••••••••"
               value={formData.password}
               onChange={handleChange}
-              required 
+              required
             />
           </div>
 
           <div className="form-group">
             <label htmlFor="confirmPassword">Confirm Password</label>
-            <input 
-              type="password" 
-              id="confirmPassword" 
-              name="confirmPassword" 
-              placeholder="••••••••" 
+            <input
+              type="password"
+              id="confirmPassword"
+              name="confirmPassword"
+              placeholder="••••••••"
               value={formData.confirmPassword}
               onChange={handleChange}
-              required 
+              required
             />
           </div>
 

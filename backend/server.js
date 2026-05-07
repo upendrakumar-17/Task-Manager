@@ -1,5 +1,6 @@
 const express = require('express');
 const env = require('dotenv');
+const cors = require("cors");
 
 env.config();
 // const app = express();
@@ -10,6 +11,13 @@ env.config();
 
 const app = express();
 const PORT = process.env.PORT;
+
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    credentials: true,
+  })
+);
 
 app.use(express.json());
 
