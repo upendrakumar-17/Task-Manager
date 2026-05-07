@@ -4,7 +4,7 @@ import Navbar from '../components/Navbar';
 import Sidebar from '../components/Sidebar';
 
 const Dashboard = () => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const navigate = useNavigate();
   const isLoggedIn = !!localStorage.getItem('token');
 
@@ -18,7 +18,7 @@ const Dashboard = () => {
 
   return (
     <div className="app-layout">
-      <Navbar isLoggedIn={isLoggedIn} onMenuClick={() => setIsSidebarOpen(true)} />
+      <Navbar isLoggedIn={isLoggedIn} onMenuClick={() => setIsSidebarOpen(!isSidebarOpen)} />
       <div className="app-container">
         <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
         <main className="main-content">
