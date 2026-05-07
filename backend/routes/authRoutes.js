@@ -12,7 +12,7 @@ router.get(
 // Google callback
 router.get(
   "/google/callback",
-  passport.authenticate("google", { failureRedirect: "/login", session: false }),
+  passport.authenticate("google", { failureRedirect: `${process.env.FRONTEND_BASE_URL}/login`, session: false }),
   (req, res) => {
     // Successful authentication
     // Generate JWT
@@ -24,20 +24,12 @@ router.get(
       _id: req.user._id,
       name: req.user.name,
       email: req.user.email,
-      token: token,
     };
 
-    // Script to send message to opener window and close this popup/tab
-    // This is useful if the frontend opens the auth in a popup
-    // For now, we'll redirect with token in query param or better, a script that saves to localStorage
-    const script = `
-      <script>
-        localStorage.setItem('token', '${token}');
-        localStorage.setItem('user', '${JSON.stringify(userData)}');
-        window.location.href = 'http://localhost:3000/dashboard';
-      </script>
-    `;
-    res.send(script);
+    // Redirect to frontend with token and user data in query params
+    // The frontend will parse these and save to localStorage
+    const redirectUrl = `${process.env.FRONTEND_BASE_URL}/login?token=${token}&user=${encodeURIComponent(JSON.stringify(userData))}&oauth=true`;
+    res.redirect(redirectUrl);
   }
 );
 

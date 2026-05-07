@@ -8,13 +8,15 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: "/api/auth/google/callback",
+      callbackURL: `${process.env.BACKEND_BASE_URL}/api/auth/google/callback`,
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
+        console.log("Google profile received:", profile.emails[0].value);
         let user = await User.findOne({ email: profile.emails[0].value });
 
         if (!user) {
+          console.log("Creating new user from Google...");
           // Create user if they don't exist
           user = await User.create({
             name: profile.displayName,
@@ -23,8 +25,10 @@ passport.use(
           });
         }
 
+        console.log("User authenticated via Google:", user._id);
         return done(null, user);
       } catch (error) {
+        console.error("Error in Google Strategy:", error);
         return done(error, null);
       }
     }

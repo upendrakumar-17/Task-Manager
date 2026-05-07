@@ -1,11 +1,32 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import "../styles/Register.css";
 import apiClient from '../services/apiClient';
 import { toast } from 'react-toastify';
 
 const Login = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Handle Google OAuth Callback
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const token = params.get('token');
+    const userData = params.get('user');
+
+    if (token && userData) {
+      try {
+        localStorage.setItem('token', token);
+        localStorage.setItem('user', userData);
+        toast.success("Logged in with Google");
+        navigate('/dashboard');
+      } catch (err) {
+        console.error("OAuth parsing error", err);
+        toast.error("Failed to sync Google account");
+      }
+    }
+  }, [location, navigate]);
+
   const [formData, setFormData] = useState({
     email: '',
     password: ''
@@ -64,7 +85,7 @@ const Login = () => {
         </header>
 
         <form className="auth-form" onSubmit={handleSubmit}>
-          <button type="button" className="google-btn" onClick={() => window.location.href = 'http://localhost:8000/api/auth/google'}>
+          <button type="button" className="google-btn" onClick={() => window.location.href = `${process.env.REACT_APP_BACKEND_URL}/api/auth/google`}>
             <svg width="20" height="20" viewBox="0 0 24 24">
               <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
               <path d="M12 23c3.13 0 5.75-1.03 7.67-2.81l-3.57-2.77c-.99.66-2.23 1.06-4.1 1.06-3.15 0-5.81-2.13-6.76-5.01H1.67v2.88C3.61 20.12 7.51 23 12 23z" fill="#34A853"/>

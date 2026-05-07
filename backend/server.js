@@ -14,7 +14,7 @@ const PORT = process.env.PORT;
 
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: `${process.env.FRONTEND_BASE_URL}`,
     credentials: true,
   })
 );
@@ -28,9 +28,11 @@ const projectRoutes = require("./routes/projectRoutes");
 const taskRoutes = require("./routes/taskRoutes");
 const otpRoutes = require("./routes/otpRoutes");
 const authRoutes = require("./routes/authRoutes");
+const passport = require("passport");
 
 // Passport Config
 require("./config/passport");
+app.use(passport.initialize());
 
 app.use("/api/users", userRoutes);
 app.use("/api/projects", projectRoutes);
