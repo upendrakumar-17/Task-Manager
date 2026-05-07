@@ -432,4 +432,38 @@
   margin-bottom: 0.25rem;
 }
 
+.delete-confirm-modal {
+  max-width: 450px;
+}
+
+.text-error {
+  color: #ef4444 !important;
+}
+
+.modal-body-confirm {
+  margin: 1.5rem 0;
+  color: var(--text-secondary);
+  font-size: 0.9375rem;
+  line-height: 1.6;
+}
+
+.modal-body-confirm strong {
+  color: var(--text-primary);
+}
+
+.btn-delete-confirm {
+  background: #ef4444;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-delete-confirm:hover {
+  background: #dc2626;
+  transform: translateY(-1px);
+}
 

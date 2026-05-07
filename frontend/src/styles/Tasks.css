@@ -159,18 +159,27 @@
   gap: 1rem;
 }
 
-.delete-task-btn {
-  background: none;
-  border: none;
-  color: #ef4444;
-  cursor: pointer;
-  padding: 0.25rem;
+/* Overdue Styles */
+.tag-group {
   display: flex;
+  gap: 0.5rem;
   align-items: center;
-  opacity: 0.6;
-  transition: opacity 0.2s;
 }
 
-.delete-task-btn:hover {
-  opacity: 1;
+.overdue-badge {
+  background: #fee2e2;
+  color: #ef4444;
+  font-size: 0.625rem;
+  font-weight: 800;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border: 1px solid #fecaca;
 }
+
+.text-overdue {
+  color: #ef4444 !important;
+  font-weight: 600;
+}
+

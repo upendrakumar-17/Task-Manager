@@ -1,5 +1,6 @@
 const Project = require("../models/projectModel");
 const User = require("../models/userModel");
+const Task = require("../models/taskModel");
 
 // Create Project
 exports.createProject = async (req, res) => {
@@ -79,13 +80,25 @@ exports.getProjectById = async (req, res) => {
 // Delete project
 exports.deleteProject = async (req, res) => {
   try {
-    await Project.findOneAndDelete({
+    const project = await Project.findOne({
       _id: req.params.id,
       admin: req.user.id,
     });
 
+    if (!project) {
+      return res.status(404).json({
+        message: "Project not found or you are not the admin",
+      });
+    }
+
+    // Cascade delete: Delete all tasks associated with this project
+    await Task.deleteMany({ project: req.params.id });
+
+    // Delete the project itself
+    await Project.findByIdAndDelete(req.params.id);
+
     res.json({
-      message: "Project deleted",
+      message: "Project and all associated tasks deleted",
     });
   } catch (error) {
     res.status(500).json({

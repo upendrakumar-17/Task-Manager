@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import "../styles/Register.css";
 import apiClient from '../services/apiClient';
+import { toast } from 'react-toastify';
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -27,6 +28,8 @@ const Register = () => {
     return null;
   };
 
+  const navigate = useNavigate();
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -34,7 +37,7 @@ const Register = () => {
     const validationError = validateForm();
 
     if (validationError) {
-      alert(validationError);
+      toast.warn(validationError);
       return;
     }
 
@@ -46,19 +49,17 @@ const Register = () => {
 
       console.log(response.data);
 
-      alert("Registration successful");
+      // Store user info and token in localStorage for immediate access
+      localStorage.setItem('user', JSON.stringify(response.data));
+      localStorage.setItem('token', response.data.token);
 
-      // reset form
-      setFormData({
-        email: "",
-        password: "",
-        confirmPassword: "",
-      });
+      toast.success("Registration successful");
+      navigate('/dashboard');
 
     } catch (error) {
       console.error(error);
 
-      alert(
+      toast.error(
         error.response?.data?.message || "Something went wrong"
       );
     }

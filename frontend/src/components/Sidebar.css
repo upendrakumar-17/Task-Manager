@@ -139,6 +139,7 @@
 
 @media (max-width: 768px) {
   .sidebar {
-    display: none; /* In a real app, you'd use a hamburger menu/drawer here */
+    width: 280px;
+    box-shadow: var(--shadow-lg);
   }
 }

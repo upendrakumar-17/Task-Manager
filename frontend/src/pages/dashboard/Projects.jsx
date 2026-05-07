@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import apiClient from '../../services/apiClient';
 import '../../styles/Projects.css';
 import '../../styles/Dashboard.css';
+import { toast } from 'react-toastify';
 
 const Projects = () => {
   const [projects, setProjects] = useState([]);
@@ -19,6 +20,9 @@ const Projects = () => {
   const [currentUser, setCurrentUser] = useState(null);
 
   const [showTaskModal, setShowTaskModal] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [projectToDelete, setProjectToDelete] = useState(null);
+  
   const [newTask, setNewTask] = useState({
     title: '',
     description: '',
@@ -51,8 +55,9 @@ const Projects = () => {
       setNewProject({ name: '', description: '' });
       setShowModal(false);
       fetchProjects();
+      toast.success("Project created successfully!");
     } catch (err) {
-      alert(err.response?.data?.message || "Failed to create project");
+      toast.error(err.response?.data?.message || "Failed to create project");
     }
   };
 
@@ -67,9 +72,9 @@ const Projects = () => {
       await apiClient.post('/api/tasks', taskData);
       setShowTaskModal(false);
       setNewTask({ title: '', description: '', dueDate: '', priority: 'Medium', assignedTo: '' });
-      alert("Task created successfully!");
+      toast.success("Task created successfully!");
     } catch (err) {
-      alert(err.response?.data?.message || "Failed to create task");
+      toast.error(err.response?.data?.message || "Failed to create task");
     }
   };
 
@@ -96,8 +101,9 @@ const Projects = () => {
       const res = await apiClient.get(`/api/projects/${selectedProject._id}`);
       setSelectedProject(res.data);
       fetchProjects();
+      toast.success("Member added successfully!");
     } catch (err) {
-      alert(err.response?.data?.message || "Failed to add member");
+      toast.error(err.response?.data?.message || "Failed to add member");
     }
   };
 
@@ -108,18 +114,27 @@ const Projects = () => {
       const res = await apiClient.get(`/api/projects/${selectedProject._id}`);
       setSelectedProject(res.data);
       fetchProjects();
+      toast.info("Member removed");
     } catch (err) {
-      alert(err.response?.data?.message || "Failed to remove member");
+      toast.error(err.response?.data?.message || "Failed to remove member");
     }
   };
 
-  const handleDeleteProject = async (projectId) => {
-    if (!window.confirm("Are you sure you want to delete this project? All associated tasks will be lost.")) return;
+  const handleDeleteProject = (projectId) => {
+    setProjectToDelete(projectId);
+    setShowDeleteConfirm(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!projectToDelete) return;
     try {
-      await apiClient.delete(`/api/projects/${projectId}`);
+      await apiClient.delete(`/api/projects/${projectToDelete}`);
       fetchProjects();
+      toast.success("Project deleted");
+      setShowDeleteConfirm(false);
+      setProjectToDelete(null);
     } catch (err) {
-      alert(err.response?.data?.message || "Failed to delete project");
+      toast.error(err.response?.data?.message || "Failed to delete project");
     }
   };
 
@@ -434,7 +449,7 @@ const Projects = () => {
                       <div key={user._id} className="search-item" onClick={() => addMember(user._id)}>
                         <div className="user-profile-sm">
                           <div className="avatar-sm">
-                            {user.name.charAt(0).toUpperCase()}
+                            {user?.name?.charAt(0).toUpperCase() || '?'}
                           </div>
                           <div className="user-info">
                             <span className="user-name">{user.name}</span>
@@ -455,13 +470,13 @@ const Projects = () => {
                     <div key={member._id} className="member-row">
                       <div className="user-profile-md">
                         <div className="avatar-md">
-                          {member.name.charAt(0).toUpperCase()}
+                          {member?.name?.charAt(0).toUpperCase() || '?'}
                         </div>
                         <div className="user-info">
                           <span className="user-name">
-                            {member._id === currentUser?._id ? "You" : member.name}
+                            {member?._id === currentUser?._id ? "You" : (member?.name || "Unknown User")}
                           </span>
-                          <span className="user-email">{member.email}</span>
+                          <span className="user-email">{member?.email || "No email"}</span>
                         </div>
                       </div>
                       
@@ -484,6 +499,37 @@ const Projects = () => {
                   ))}
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* Custom Delete Confirmation Modal */}
+      {showDeleteConfirm && (
+        <div className="modal-overlay">
+          <div className="modal-content delete-confirm-modal">
+            <div className="modal-header">
+              <div className="modal-title-group">
+                <h2 className="text-error">Delete Project?</h2>
+                <p className="modal-subtitle">This action cannot be undone.</p>
+              </div>
+              <button className="close-modal" onClick={() => setShowDeleteConfirm(false)}>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </button>
+            </div>
+            <div className="modal-body-confirm">
+              <p>Are you sure you want to delete <strong>{projects.find(p => p._id === projectToDelete)?.name}</strong>? All tasks associated with this project will be permanently removed.</p>
+            </div>
+            <div className="modal-footer-actions">
+              <button className="btn-cancel" onClick={() => {
+                setShowDeleteConfirm(false);
+                setProjectToDelete(null);
+              }}>Cancel</button>
+              <button className="btn-delete-confirm" onClick={confirmDelete}>
+                Delete Project
+              </button>
             </div>
           </div>
         </div>

@@ -48,9 +48,15 @@ const DashboardHome = () => {
           <h3>Your Tasks</h3>
           <div className="stat-value">{tasks.length}</div>
         </div>
+        <div className="stat-card">
+          <h3 className="text-error">Tasks Overdue</h3>
+          <div className="stat-value text-error">
+            {tasks.filter(t => t.status !== 'Completed' && t.dueDate && new Date(t.dueDate) < new Date()).length}
+          </div>
+        </div>
       </div>
 
-      <section className="recent-projects">
+      {/* <section className="recent-projects"> */}
         <h2>Your Projects</h2>
         <div className="project-list">
           {projects.map(project => (
@@ -69,7 +75,25 @@ const DashboardHome = () => {
             </div>
           )}
         </div>
-      </section>
+      {tasks.filter(t => t.status !== 'Completed' && t.dueDate && new Date(t.dueDate) < new Date()).length > 0 && (
+        <section className="recent-tasks overdue-section">
+          <h2 className="text-error">Overdue Tasks</h2>
+          <div className="task-list">
+            {tasks.filter(t => t.status !== 'Completed' && t.dueDate && new Date(t.dueDate) < new Date()).map(task => (
+              <div key={task._id} className="task-item overdue-item">
+                <div className="task-info">
+                  <h3>{task.title}</h3>
+                  <span className="task-project">{task.project?.name}</span>
+                </div>
+                <div className="task-meta-right">
+                  <span className="overdue-badge-small">Overdue</span>
+                  <span className="overdue-date">{new Date(task.dueDate).toLocaleDateString()}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
 
       <section className="recent-tasks">
         <h2>Recent Tasks</h2>

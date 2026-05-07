@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import "../styles/Register.css";
 import apiClient from '../services/apiClient';
+import { toast } from 'react-toastify';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -26,7 +27,7 @@ const Login = () => {
 
     const validationError = validateForm();
     if (validationError) {
-      alert(validationError);
+      toast.warn(validationError);
       return;
     }
 
@@ -42,12 +43,12 @@ const Login = () => {
       localStorage.setItem('user', JSON.stringify(response.data));
       localStorage.setItem('token', response.data.token);
 
-      alert("Login successful");
+      toast.success("Login successful");
       navigate('/dashboard');
 
     } catch (error) {
       console.error(error);
-      alert(
+      toast.error(
         error.response?.data?.message || "Invalid credentials"
       );
     }

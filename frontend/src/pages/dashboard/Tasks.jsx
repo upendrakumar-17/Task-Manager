@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import apiClient from '../../services/apiClient';
 import '../../styles/Tasks.css';
+import { toast } from 'react-toastify';
 
 const Tasks = () => {
   const [tasks, setTasks] = useState([]);
@@ -29,8 +30,9 @@ const Tasks = () => {
     try {
       await apiClient.put(`/api/tasks/${taskId}`, { status: newStatus });
       fetchTasks();
+      toast.success(`Task marked as ${newStatus}`);
     } catch (err) {
-      alert("Failed to update status");
+      toast.error("Failed to update status");
     }
   };
 
@@ -39,14 +41,19 @@ const Tasks = () => {
     try {
       await apiClient.delete(`/api/tasks/${taskId}`);
       fetchTasks();
+      toast.success("Task deleted");
     } catch (err) {
-      alert("Failed to delete task");
+      toast.error("Failed to delete task");
     }
   };
 
-  const filteredTasks = filter === 'All' 
-    ? tasks 
-    : tasks.filter(t => t.status === filter);
+  const filteredTasks = tasks.filter(t => {
+    if (filter === 'All') return true;
+    if (filter === 'Overdue') {
+      return t.status !== 'Completed' && t.dueDate && new Date(t.dueDate) < new Date();
+    }
+    return t.status === filter;
+  });
 
   if (loading) return <div className="loading-container">Loading tasks...</div>;
 
@@ -70,6 +77,7 @@ const Tasks = () => {
             <option value="Todo">Todo</option>
             <option value="In Progress">In Progress</option>
             <option value="Completed">Completed</option>
+            <option value="Overdue">Overdue</option>
           </select>
         </div>
         <div className="tasks-count">
@@ -85,9 +93,14 @@ const Tasks = () => {
             <div key={task._id} className="task-card">
               <div className="task-card-header">
                 <h3>{task.title}</h3>
-                <span className={`priority-tag priority-${task.priority.toLowerCase()}`}>
-                  {task.priority}
-                </span>
+                <div className="tag-group">
+                  {task.status !== 'Completed' && task.dueDate && new Date(task.dueDate) < new Date() && (
+                    <span className="overdue-badge">Overdue</span>
+                  )}
+                  <span className={`priority-tag priority-${task.priority.toLowerCase()}`}>
+                    {task.priority}
+                  </span>
+                </div>
               </div>
               <p className="task-desc">{task.description}</p>
               <div className="task-project-info">
@@ -105,7 +118,9 @@ const Tasks = () => {
                     <line x1="8" y1="2" x2="8" y2="6"></line>
                     <line x1="3" y1="10" x2="21" y2="10"></line>
                   </svg>
-                  <span>{task.dueDate ? new Date(task.dueDate).toLocaleDateString() : 'No deadline'}</span>
+                  <span className={task.status !== 'Completed' && task.dueDate && new Date(task.dueDate) < new Date() ? 'text-overdue' : ''}>
+                    {task.dueDate ? new Date(task.dueDate).toLocaleDateString() : 'No deadline'}
+                  </span>
                 </div>
                 
                 <div className="task-actions">
