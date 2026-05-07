@@ -41,11 +41,11 @@ const DashboardHome = () => {
 
       <div className="stats-grid">
         <div className="stat-card">
-          <h3>Total Projects</h3>
+          <h3>Your Projects</h3>
           <div className="stat-value">{projects.length}</div>
         </div>
         <div className="stat-card">
-          <h3>Assigned Tasks</h3>
+          <h3>Your Tasks</h3>
           <div className="stat-value">{tasks.length}</div>
         </div>
       </div>

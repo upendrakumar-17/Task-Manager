@@ -18,6 +18,15 @@ const Projects = () => {
   const [searchResults, setSearchResults] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
 
+  const [showTaskModal, setShowTaskModal] = useState(false);
+  const [newTask, setNewTask] = useState({
+    title: '',
+    description: '',
+    dueDate: '',
+    priority: 'Medium',
+    assignedTo: ''
+  });
+
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem('user'));
     setCurrentUser(user);
@@ -44,6 +53,23 @@ const Projects = () => {
       fetchProjects();
     } catch (err) {
       alert(err.response?.data?.message || "Failed to create project");
+    }
+  };
+
+  const handleCreateTask = async (e) => {
+    e.preventDefault();
+    try {
+      const taskData = {
+        ...newTask,
+        projectId: selectedProject._id,
+        assignedTo: newTask.assignedTo || currentUser?._id
+      };
+      await apiClient.post('/api/tasks', taskData);
+      setShowTaskModal(false);
+      setNewTask({ title: '', description: '', dueDate: '', priority: 'Medium', assignedTo: '' });
+      alert("Task created successfully!");
+    } catch (err) {
+      alert(err.response?.data?.message || "Failed to create task");
     }
   };
 
@@ -138,6 +164,16 @@ const Projects = () => {
                     <span>{project.members?.length || 0} Members</span>
                   </div>
                   <div className="card-actions">
+                    <button 
+                      className="manage-btn secondary-action" 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedProject(project);
+                        setShowTaskModal(true);
+                      }}
+                    >
+                      Add Task
+                    </button>
                     <button 
                       className="manage-btn" 
                       onClick={(e) => {
@@ -239,6 +275,81 @@ const Projects = () => {
               <div className="modal-actions">
                 <button type="button" className="btn-secondary" onClick={() => setShowModal(false)}>Cancel</button>
                 <button type="submit" className="btn-primary">Create Project</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Add Task Modal */}
+      {showTaskModal && selectedProject && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h2>Add Task to {selectedProject.name}</h2>
+              <button className="close-modal" onClick={() => setShowTaskModal(false)}>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </button>
+            </div>
+            <form className="modal-form" onSubmit={handleCreateTask}>
+              <div className="form-group">
+                <label>Task Title</label>
+                <input 
+                  type="text" 
+                  value={newTask.title}
+                  onChange={(e) => setNewTask({...newTask, title: e.target.value})}
+                  placeholder="e.g. Finalize UI"
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label>Description</label>
+                <textarea 
+                  value={newTask.description}
+                  onChange={(e) => setNewTask({...newTask, description: e.target.value})}
+                  placeholder="Details..."
+                  rows="3"
+                />
+              </div>
+              <div className="task-form-row" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <div className="form-group">
+                  <label>Priority</label>
+                  <select 
+                    value={newTask.priority} 
+                    onChange={(e) => setNewTask({...newTask, priority: e.target.value})}
+                  >
+                    <option value="Low">Low</option>
+                    <option value="Medium">Medium</option>
+                    <option value="High">High</option>
+                  </select>
+                </div>
+                <div className="form-group">
+                  <label>Due Date</label>
+                  <input 
+                    type="date" 
+                    value={newTask.dueDate}
+                    onChange={(e) => setNewTask({...newTask, dueDate: e.target.value})}
+                  />
+                </div>
+              </div>
+              <div className="form-group">
+                <label>Assign To</label>
+                <select 
+                  value={newTask.assignedTo} 
+                  onChange={(e) => setNewTask({...newTask, assignedTo: e.target.value})}
+                >
+                  <option value="">Me (Default)</option>
+                  {selectedProject.members.map(member => (
+                    <option key={member._id} value={member._id}>{member.name}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="modal-actions">
+                <button type="button" className="btn-secondary" onClick={() => setShowTaskModal(false)}>Cancel</button>
+                <button type="submit" className="btn-primary">Create Task</button>
               </div>
             </form>
           </div>
