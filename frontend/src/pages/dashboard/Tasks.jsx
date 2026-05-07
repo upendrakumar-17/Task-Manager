@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import apiClient from '../../services/apiClient';
 import '../../styles/Tasks.css';
 import { toast } from 'react-toastify';
+import Loading from '../../utilities/Loading';
 
 const Tasks = () => {
   const [tasks, setTasks] = useState([]);
@@ -55,7 +56,7 @@ const Tasks = () => {
     return t.status === filter;
   });
 
-  if (loading) return <div className="loading-container">Loading tasks...</div>;
+  if (loading) return <Loading message="Fetching your tasks..." />;
 
   return (
     <div className="tasks-page">

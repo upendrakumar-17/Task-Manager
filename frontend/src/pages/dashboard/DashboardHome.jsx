@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import apiClient from '../../services/apiClient';
 import '../../styles/Dashboard.css';
+import Loading from '../../utilities/Loading';
 
 const DashboardHome = () => {
   const [projects, setProjects] = useState([]);
@@ -26,11 +27,7 @@ const DashboardHome = () => {
   }, []);
 
   if (loading) {
-    return (
-      <div className="loading-container">
-        <span>Loading dashboard data...</span>
-      </div>
-    );
+    return <Loading message="Preparing your overview..." />;
   }
 
   return (

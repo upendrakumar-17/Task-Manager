@@ -3,6 +3,7 @@ import apiClient from '../../services/apiClient';
 import '../../styles/Projects.css';
 import '../../styles/Dashboard.css';
 import { toast } from 'react-toastify';
+import Loading from '../../utilities/Loading';
 
 const Projects = () => {
   const [projects, setProjects] = useState([]);
@@ -139,7 +140,7 @@ const Projects = () => {
   };
 
   if (loading) {
-    return <div className="loading-container">Loading projects...</div>;
+    return <Loading message="Syncing projects..." />;
   }
 
   return (

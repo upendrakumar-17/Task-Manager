@@ -4,9 +4,11 @@ import Navbar from "../components/Navbar";
 import "../styles/Landing.css";
 
 const Landing = () => {
+  const isLoggedIn = !!localStorage.getItem('token');
+
   return (
     <div className="landing">
-      <Navbar isLoggedIn={false} />
+      <Navbar isLoggedIn={isLoggedIn} />
 
       <main className="hero">
         <div className="hero-content">
@@ -18,7 +20,13 @@ const Landing = () => {
           </p>
 
           <div className="hero-buttons">
-            <Link to="/register" className="primary-btn">Get Started</Link>
+            <Link to="/register" className="primary-btn">
+              Get Started
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+                <polyline points="12 5 19 12 12 19"></polyline>
+              </svg>
+            </Link>
             <button className="secondary-btn">Learn More</button>
           </div>
         </div>

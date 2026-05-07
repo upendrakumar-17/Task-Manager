@@ -24,7 +24,7 @@ const Navbar = ({ isLoggedIn = false, onMenuClick }) => {
         <div className="navbar-right">
           {isLoggedIn ? (
             <div className="nav-auth-links">
-              <Link to="/profile" className="profile-trigger" title="Profile">
+              <Link to="/dashboard" className="profile-trigger" title="Go to Dashboard">
                 <div className="profile-avatar">
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
