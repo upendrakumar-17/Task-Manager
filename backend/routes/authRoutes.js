@@ -12,7 +12,7 @@ router.get(
 // Google callback
 router.get(
   "/google/callback",
-  passport.authenticate("google", { failureRedirect: `${process.env.FRONTEND_BASE_URL}/login`, session: false }),
+  passport.authenticate("google", { failureRedirect: `${process.env.FRONTEND_BASE_URL.replace(/\/$/, "")}/login`, session: false }),
   (req, res) => {
     // Successful authentication
     // Generate JWT
@@ -28,7 +28,7 @@ router.get(
 
     // Redirect to frontend with token and user data in query params
     // The frontend will parse these and save to localStorage
-    const redirectUrl = `${process.env.FRONTEND_BASE_URL}/login?token=${token}&user=${encodeURIComponent(JSON.stringify(userData))}&oauth=true`;
+    const redirectUrl = `${process.env.FRONTEND_BASE_URL.replace(/\/$/, "")}/login?token=${token}&user=${encodeURIComponent(JSON.stringify(userData))}&oauth=true`;
     res.redirect(redirectUrl);
   }
 );
